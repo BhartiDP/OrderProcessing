@@ -1,0 +1,101 @@
+
+ 
+5/3012020 Total  280 Coding Tests - New SCM Platform - Confluence   Problem Statement 2: Business Rules  Engine Imagine you’re writing an order processing application for a large company. In the past, this company used a fairly random mixture of manual and ad-hoc automated business practices to handle orders; they now want to put all these various ways of hanadling orders together into one whole: your application. After a full day of workshops you have gathered the following set of rules which need to be managed by the new system. • If the payment is for a physical product, generate a packing slip for shipping. • If the payment is for a book, create a duplicate packing slip for the royalty department. • If the payment is for a membership, activate that membership. • If the payment is an upgrade to a membership, apply the upgrade. • If the payment is for a membership or upgrade, e-mail the owner and inform them of the activation/upgrade. • If the payment is for the video “Learning to Ski,” add a free “First Aid” video to the packing slip (the result of a court decision in 1997). • If the payment is for a physical product or a book, generate a commission payment to the agent. Design a new system which can handle these rules and yet op
+     
+
+
+
+Staregy Design pattern we can use for behavior of services and bunddling togther along with it open for extension as using  Interface stratgey
+
+
+
+public interface IOrderStrategy{
+   public string GenerateSlip(string ruleType);
+}
+
+public interface IMEmbershipNotificationUpgrade{
+   public void SendEmail(customer c);
+}
+
+public class physicalProductRule : IOrderStrategy
+{
+   public string GenerateSlip(string message)
+  {
+      return message;
+  }
+
+}
+
+
+public class bookRule : IOrderStrategy
+{
+   public string GenerateSlip(string message)
+  {
+      return message;
+  }
+
+}
+
+public class MemberShipRule: IOrderStrategy,IMEmbershipNotificationUpgrade
+{
+   public string GenerateSlip(string message)
+  {
+      return message;
+  }
+ public string SendEmail(customer c)
+{
+   //SMTP logic to send email  to cusostomer  
+}
+
+}
+
+public class bookorphysicalProductRule : IOrderStrategy
+{
+   public string GenerateCommisionAgentSlip(string message)
+  {
+      return message;
+  }
+ 
+
+///method to get commision 
+}
+
+
+public class Context
+
+{
+   private IOrderStrategy os;
+     
+   public Context(IOrderStrategy os{
+      this.os= os
+   }
+
+   public string  executeOrderRuleStratgey(string type){
+      return os.GenerateSlip(type);
+   }
+
+}
+
+
+Public class Customer
+{
+  //properties 
+
+  first name,lastname , email id ,  custID;
+
+}
+
+public class OrderStrategyRule{
+   public static void main(String[] args) {
+      Context context = new Context(new physicalProductRule());		
+      Console.writeline(context.executeOrderRuleStratgey(""physicalproduct slip gets generated");
+
+      context = new Context(new GenerateCommisionAgentSlip());		
+      Console.writeline(context.executeOrderRuleStratgey(""product type book  or  physcial product get commision");
+
+    ---similar for all types creation and calling
+      
+   }
+}
+
+
