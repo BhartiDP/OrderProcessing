@@ -1,16 +1,58 @@
-
- 
-5/3012020 Total  280 Coding Tests - New SCM Platform - Confluence   Problem Statement 2: Business Rules  Engine Imagine you’re writing an order processing application for a large company. In the past, this company used a fairly random mixture of manual and ad-hoc automated business practices to handle orders; they now want to put all these various ways of hanadling orders together into one whole: your application. After a full day of workshops you have gathered the following set of rules which need to be managed by the new system. • If the payment is for a physical product, generate a packing slip for shipping. • If the payment is for a book, create a duplicate packing slip for the royalty department. • If the payment is for a membership, activate that membership. • If the payment is an upgrade to a membership, apply the upgrade. • If the payment is for a membership or upgrade, e-mail the owner and inform them of the activation/upgrade. • If the payment is for the video “Learning to Ski,” add a free “First Aid” video to the packing slip (the result of a court decision in 1997). • If the payment is for a physical product or a book, generate a commission payment to the agent. Design a new system which can handle these rules and yet op
-     
-
-
-
 Staregy Design pattern we can use for behavior of services and bunddling togther along with it open for extension as using  Interface stratgey
 
 
 
+public class ProductType
+{
+   public string ShippingAddress {get;set;}
+   public string PNAME;
+ public  string  PCODE;
+
+   public ProdutType(string pname)
+  { 
+    this.PNAME;=pname;
+ 
+  }
+   
+  public string getproductcode(string pname)
+{  
+   //get the code from DBLayer for prouctcode
+   ProductDAL pl=new ProductDAL();
+   PCODE= pl.getproductcode(pname);
+   return pcode;
+}
+  
+
+}
+
+
+//DAL
+
+public class ProductDAL 
+{
+  string pcode="";
+  Sqlconnection sql;
+  public string getproductcode(string pname)
+{
+   using(sql=new SqlConenction())
+{
+     //Dataset.ExceuteNonQuery()
+     To get the product code from PRODuct DB
+
+    pcode= Dataset.ExceuteNonQuery();
+
+}
+return pcode;
+  
+
+} 
+
+
+
+
+
 public interface IOrderStrategy{
-   public string GenerateSlip(string ruleType);
+   public string GenerateSlip(string addresstoship);
 }
 
 public interface IMEmbershipNotificationUpgrade{
@@ -19,9 +61,9 @@ public interface IMEmbershipNotificationUpgrade{
 
 public class physicalProductRule : IOrderStrategy
 {
-   public string GenerateSlip(string message)
+   public string GenerateSlip(string address)
   {
-      return message;
+      return address;
   }
 
 }
@@ -29,35 +71,22 @@ public class physicalProductRule : IOrderStrategy
 
 public class bookRule : IOrderStrategy
 {
-   public string GenerateSlip(string message)
+   public string GenerateSlip(string address)
   {
-      return message;
+      return address;
   }
 
 }
 
 public class MemberShipRule: IOrderStrategy,IMEmbershipNotificationUpgrade
 {
-   public string GenerateSlip(string message)
+   public string GenerateSlip(string address)
   {
-      return message;
+      return address;
   }
  public string SendEmail(customer c)
 {
    //SMTP logic to send email  to cusostomer  
-}
-
-}
-
-public class bookorphysicalProductRule : IOrderStrategy
-{
-   public string GenerateCommisionAgentSlip(string message)
-  {
-      return message;
-  }
- 
-
-///method to get commision 
 }
 
 
@@ -65,13 +94,21 @@ public class Context
 
 {
    private IOrderStrategy os;
+    private readonly Product _product;
+    private decimal _amount;
+    provate string _address;
      
-   public Context(IOrderStrategy os{
+   public Context(IOrderStratgey os, Product p, string SA){
       this.os= os
+     if(p!==null)
+     this._product=p;
+     this._address= SA;
+
+  
    }
 
-   public string  executeOrderRuleStratgey(string type){
-      return os.GenerateSlip(type);
+   public string  executeOrderRuleStratgey(string address){
+      return os.GenerateSlip(address));
    }
 
 }
@@ -85,17 +122,55 @@ Public class Customer
 
 }
 
-public class OrderStrategyRule{
-   public static void main(String[] args) {
-      Context context = new Context(new physicalProductRule());		
-      Console.writeline(context.executeOrderRuleStratgey(""physicalproduct slip gets generated");
+public class PaymentOrderStrategyRule{
+ 
+     
+      Cusomer C=new Customer();
+      
+       string address = c.address;
+ 
+      Context context = new Context(new physicalProductRule(),new Product(),address);		
+      context.executeOrderRuleStratgey(address);
 
-      context = new Context(new GenerateCommisionAgentSlip());		
-      Console.writeline(context.executeOrderRuleStratgey(""product type book  or  physcial product get commision");
-
-    ---similar for all types creation and calling
+      context = new Context(new MemberShipRule(),new Product(),address);		
+      context.executeOrderRuleStratgey(address);
+       context = new Context(new bookRule(),new Product(),address);		
+      context.executeOrderRuleStratgey(address);
       
    }
 }
+
+
+
+
+
+Unit test apporach :
+
+
+//Get the contect object
+
+pass below parameters :
+
+Mockclass from IOrderstrategy - > in turn calls  from constructor  product classes and shipping address details
+
+As per the product type
+If productypecode==physicalproduct
+ {
+     
+    GenerateSlip() method
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
